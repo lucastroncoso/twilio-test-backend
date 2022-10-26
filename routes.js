@@ -9,7 +9,7 @@ router.post('/conversation/message', client.createMessage)
 router.get('/conversation/participant', client.fetchAllParticipantsForConversation)
 router.post('/conversation/participant', client.addParticipantToConversation)
 router.get("/auth/user/:user", (req, res) => {
-    const jwt = getAccessToken(req.params.user)
+    const jwt = client.getAccessToken(req.params.user)
     res.send({token: jwt})
 })
 

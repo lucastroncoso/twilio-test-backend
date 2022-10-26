@@ -1,5 +1,3 @@
-const { json } = require('body-parser');
-
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const twilioApiKey = process.env.TWILIO_API_KEY_SID
@@ -27,15 +25,12 @@ exports.createConversationWithParticipant = async (req, res) => {
     await addParticipant(conversation.sid, req.body.senderIdentity)
     await addParticipant(conversation.sid, req.body.receiverIdentity)
     res.json(conversation)
-       
+
 }
 
 exports.addParticipantToConversation = async (req, res) => {
-    const participant = await twilio(req.body.conversationSid)
-        .participants
-        .create({ identity: req.body.identity })
+    const participant = await addParticipant(req.body.conversationSid)
         .then(participant => {
-            console.log(participant)
             res.json(participant)
         });
 }
@@ -44,7 +39,6 @@ exports.fetchAllConversationsForParticipant = async (req, res) => {
     await client.conversations.v1.participantConversations
         .list({ identity: req.body.identity, limit: 20 })
         .then(participantConversations => {
-            participantConversations.forEach(p => console.log(p.conversationUniqueName))
             res.json(participantConversations)
         })
         .catch(err => console.log(err))
@@ -80,7 +74,7 @@ exports.createMessage = async (req, res) => {
 
 exports.getAccessToken = (user) => {
     const token = new AccessToken(
-        twilioAccountSid,
+        accountSid,
         twilioApiKey,
         twilioApiSecret,
         { identity: user }
